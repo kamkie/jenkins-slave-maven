@@ -13,11 +13,12 @@ ENV MAVEN_VERSION=3.6 \
 # Install Maven
 RUN set -e \
     INSTALL_PKGS="java-1.8.0-openjdk-devel.x86_64 maven*" && \
+    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
     curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
     curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
-    yum-config-manager --disable rhel-server-extras rhel-server rhel-fast-datapath rhel-server-optional rhel-server-ose rhel-server-rhscl && \
-    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
-    yum install -y $INSTALL_PKGS  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
+    curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo && \
+    curl https://download.docker.com/linux/centos/gpg -o /etc/pki/rpm-gpg/docker-gpg && \
+    yum $DISABLES install -y $INSTALL_PKGS  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
     curl -LOk https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
     unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt && \
     rm -f gradle-${GRADLE_VERSION}-bin.zip && \
