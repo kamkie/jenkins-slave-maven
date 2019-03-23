@@ -16,7 +16,7 @@ RUN curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS
     curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo && \
     curl https://download.docker.com/linux/centos/gpg -o /etc/pki/rpm-gpg/docker-gpg && \
     DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
-    yum $DISABLES install -y 'java-1.8.0-openjdk-devel.x86_64' maven  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
+    yum $DISABLES install -y sudo 'java-1.8.0-openjdk-devel.x86_64' maven  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
     curl -LOk https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
     unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt && \
     rm -f gradle-${GRADLE_VERSION}-bin.zip && \
@@ -35,6 +35,7 @@ ADD ./contrib/settings.xml $HOME/.m2/
 ADD ./contrib/init.gradle $HOME/.gradle/
 
 RUN chown -R 1001:0 $HOME && \
-    chmod -R g+rw $HOME
+    chmod -R g+rw $HOME && \
+    usermod -aG wheel 1001
 
 USER 1001
