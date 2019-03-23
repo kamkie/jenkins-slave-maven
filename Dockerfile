@@ -1,30 +1,29 @@
 FROM quay.io/openshift/origin-jenkins-agent-base:v4.0
+
 MAINTAINER Gabe Montero <gmontero@redhat.com>
 
-# Labels consumed by Red Hat build service
-LABEL com.redhat.component="jenkins-agent-maven-35-rhel7-container" \
-      name="openshift4/jenkins-agent-maven-36-rhel7" \
-      version="4.0-7" \
-      architecture="x86_64" \
-      io.k8s.display-name="Jenkins Agent Maven" \
-      io.k8s.description="The jenkins agent maven image has the maven tools on top of the jenkins slave base image." \
-      io.openshift.tags="openshift,jenkins,agent,maven"
-
 ENV MAVEN_VERSION=3.6 \
+    GRADLE_VERSION=4.2.1 \
     BASH_ENV=/usr/local/bin/scl_enable \
     ENV=/usr/local/bin/scl_enable \
     PROMPT_COMMAND=". /usr/local/bin/scl_enable" \
+    PATH=$PATH:/opt/gradle/bin \
     OPENSHIFT_JENKINS_JVM_ARCH=x86_64
 
 # Install Maven
-RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
-    yum-config-manager --enable rhel-server-rhscl-8-rpms && \
-    yum-config-manager --disable epel >/dev/null || : && \
-    INSTALL_PKGS="java-1.8.0-openjdk-devel rh-maven36*" && \
-    yum install -y $INSTALL_PKGS && \
-    rpm -V  java-1.8.0-openjdk-devel rh-maven36 && \
+RUN INSTALL_PKGS="java-1.8.0-openjdk-devel.x86_64 maven*" && \
+    curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
+    curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
+    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
+    yum $DISABLES install -y $INSTALL_PKGS && \
+    curl -LOk https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
+    unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt && \
+    rm -f gradle-${GRADLE_VERSION}-bin.zip && \
+    ln -s /opt/gradle-${GRADLE_VERSION} /opt/gradle && \
+    rpm -V java-1.8.0-openjdk-devel.x86_64 maven && \
     yum clean all -y && \
-    mkdir -p $HOME/.m2
+    mkdir -p $HOME/.m2 && \
+    mkdir -p $HOME/.gradle
 
 # When bash is started non-interactively, to run a shell script, for example it
 # looks for this variable and source the content of this file. This will enable
@@ -32,6 +31,7 @@ RUN yum-config-manager --enable rhel-server-rhscl-7-rpms && \
 ADD contrib/bin/scl_enable /usr/local/bin/scl_enable
 ADD contrib/bin/configure-agent /usr/local/bin/configure-agent
 ADD ./contrib/settings.xml $HOME/.m2/
+ADD ./contrib/init.gradle $HOME/.gradle/
 
 RUN chown -R 1001:0 $HOME && \
     chmod -R g+rw $HOME
