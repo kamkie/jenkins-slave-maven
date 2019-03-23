@@ -13,7 +13,7 @@ LABEL com.redhat.component="jenkins-agent-maven-35-rhel7-container" \
 ENV MAVEN_VERSION=3.6 \
     BASH_ENV=/usr/local/bin/scl_enable \
     ENV=/usr/local/bin/scl_enable \
-    PROMPT_COMMAND=". /usr/local/bin/scl_enable"
+    PROMPT_COMMAND=". /usr/local/bin/scl_enable" \
     OPENSHIFT_JENKINS_JVM_ARCH=x86_64
 
 # Install Maven
