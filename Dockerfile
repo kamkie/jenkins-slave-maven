@@ -15,14 +15,13 @@ RUN INSTALL_PKGS="java-1.8.0-openjdk-devel.x86_64 maven*" && \
     curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
     curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
-    yum $DISABLES install -y $INSTALL_PKGS  yum-utils device-mapper-persistent-data lvm2 && \
     yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo && \
-    yum $DISABLES install docker-ce docker-ce-cli containerd.io && \
+    yum $DISABLES install -y $INSTALL_PKGS  yum-utils device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
     curl -LOk https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
     unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt && \
     rm -f gradle-${GRADLE_VERSION}-bin.zip && \
     ln -s /opt/gradle-${GRADLE_VERSION} /opt/gradle && \
-    rpm -V java-1.8.0-openjdk-devel.x86_64 maven && \
+    rpm -V java-1.8.0-openjdk-devel.x86_64 maven docker-ce && \
     yum clean all -y && \
     mkdir -p $HOME/.m2 && \
     mkdir -p $HOME/.gradle
