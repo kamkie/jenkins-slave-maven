@@ -11,14 +11,12 @@ ENV MAVEN_VERSION=3.6 \
     OPENSHIFT_JENKINS_JVM_ARCH=x86_64
 
 # Install Maven
-RUN set -e \
-    INSTALL_PKGS="java-1.8.0-openjdk-devel.x86_64 maven*" && \
-    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
-    curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
+RUN curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
     curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo && \
     curl https://download.docker.com/linux/centos/gpg -o /etc/pki/rpm-gpg/docker-gpg && \
-    yum $DISABLES install -y $INSTALL_PKGS  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
+    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
+    yum $DISABLES install -y 'java-1.8.0-openjdk-devel.x86_64' maven  device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
     curl -LOk https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
     unzip gradle-${GRADLE_VERSION}-bin.zip -d /opt && \
     rm -f gradle-${GRADLE_VERSION}-bin.zip && \
