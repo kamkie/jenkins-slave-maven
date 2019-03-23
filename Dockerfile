@@ -29,13 +29,16 @@ RUN curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS
 # When bash is started non-interactively, to run a shell script, for example it
 # looks for this variable and source the content of this file. This will enable
 # the SCL for all scripts without need to do 'scl enable'.
-ADD contrib/bin/scl_enable /usr/local/bin/scl_enable
+#ADD contrib/bin/scl_enable /usr/local/bin/scl_enable
 ADD contrib/bin/configure-agent /usr/local/bin/configure-agent
 ADD ./contrib/settings.xml $HOME/.m2/
 ADD ./contrib/init.gradle $HOME/.gradle/
 
+USER root
 RUN chown -R 1001:0 $HOME && \
     chmod -R g+rw $HOME && \
-    usermod -aG wheel 1001
+    useradd -u 1001 jenkins && \
+    usermod -aG wheel jenkins && \
+    echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 USER 1001
