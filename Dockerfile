@@ -1,4 +1,4 @@
-FROM quay.io/openshift/origin-jenkins-agent-base:4.3
+FROM quay.io/openshift/origin-jenkins-agent-base:4.2
 
 ENV MAVEN_VERSION=3.5 \
     BASH_ENV=/usr/local/bin/scl_enable \
@@ -28,11 +28,12 @@ RUN chown -R 1001:0 $HOME && \
     chmod -R g+rw $HOME && \
     useradd -u 1001 jenkins && \
     usermod -aG wheel jenkins && \
+    usermod -aG docker jenkins && \
     echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     rpm -V java-1.8.0-openjdk-devel.x86_64 maven docker-ce
 
 USER 1001
 
-ADD entrypoint.sh $HOME/entrypoint.sh
+ADD entrypoint.sh /entrypoint.sh
 
-ENTRYPOINT ["/usr/bin/go-init", "-main", "$HOME/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]

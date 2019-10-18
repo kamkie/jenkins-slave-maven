@@ -1,3 +1,3 @@
-sudo dockerd -H /var/run/docker.sock -H tcp:127.0.0.0:2375
+sudo dockerd -H unix:///var/run/docker.sock -H tcp://127.0.0.1:2375 &
 
-/usr/local/bin/run-jnlp-client
+/usr/local/bin/run-jnlp-client "$@"
