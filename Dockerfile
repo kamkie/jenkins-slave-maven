@@ -11,8 +11,8 @@ RUN INSTALL_PKGS="java-11-openjdk-devel.x86_64 java-1.8.0-openjdk-devel.x86_64 m
     curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
     curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo && \
     curl https://download.docker.com/linux/centos/gpg -o /etc/pki/rpm-gpg/docker-gpg && \
-    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl" && \
-    yum $DISABLES install -y $INSTALL_PKGS sudo device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
+    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl --disablerepo=docker-ce-stable" && \
+    yum $DISABLES install --enablerepo=docker-ce-nightly -y $INSTALL_PKGS sudo device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
     rpm -V java-11-openjdk-devel.x86_64 java-1.8.0-openjdk-devel.x86_64 maven && \
     yum clean all -y && \
     mkdir -p $HOME/.m2
