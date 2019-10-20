@@ -1,39 +1,44 @@
-FROM quay.io/openshift/origin-jenkins-agent-base:4.2
+FROM centos:centos8
+#RUN dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo && \
+#    dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+#RUN dnf install -y sudo java-11-openjdk-devel.x86_64
 
-ENV MAVEN_VERSION=3.5 \
-    BASH_ENV=/usr/local/bin/scl_enable \
-    ENV=/usr/local/bin/scl_enable \
-    PROMPT_COMMAND=". /usr/local/bin/scl_enable"
+#RUN dnf install -y python3
+#RUN curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
+#    curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
+#RUN dnf install -y centos-release-scl && dnf config-manager --disable centos-sclo-rh
+#RUN dnf repolist
 
-# Install Maven
-RUN INSTALL_PKGS="java-11-openjdk-devel.x86_64 java-1.8.0-openjdk-devel.x86_64 maven*" && \
-    curl https://raw.githubusercontent.com/cloudrouter/centos-repo/master/CentOS-Base.repo -o /etc/yum.repos.d/CentOS-Base.repo && \
-    curl http://mirror.centos.org/centos-7/7/os/x86_64/RPM-GPG-KEY-CentOS-7 -o /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 && \
-    curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo && \
-    curl https://download.docker.com/linux/centos/gpg -o /etc/pki/rpm-gpg/docker-gpg && \
-    DISABLES="--disablerepo=rhel-server-extras --disablerepo=rhel-server --disablerepo=rhel-fast-datapath --disablerepo=rhel-server-optional --disablerepo=rhel-server-ose --disablerepo=rhel-server-rhscl --disablerepo=docker-ce-stable" && \
-    yum $DISABLES install --enablerepo=docker-ce-nightly -y $INSTALL_PKGS sudo device-mapper-persistent-data lvm2 docker-ce docker-ce-cli containerd.io && \
-    rpm -V java-11-openjdk-devel.x86_64 java-1.8.0-openjdk-devel.x86_64 maven && \
-    yum clean all -y && \
-    mkdir -p $HOME/.m2
+#RUN dnf install -y \
+#    http://mirror.centos.org/centos/7/os/x86_64/Packages/policycoreutils-python-2.5-33.el7.x86_64.rpm \
+#    http://mirror.centos.org/centos/7/extras/x86_64/Packages/container-selinux-2.107-3.el7.noarch.rpm
+#    http://mirror.centos.org/centos/7/os/x86_64/Packages/libtool-ltdl-2.4.2-22.el7_3.x86_64.rpm \
+#    http://mirror.centos.org/centos/7/extras/x86_64/Packages/pigz-2.3.3-1.el7.centos.x86_64.rpm
+#RUN dnf install -y docker-ce
+#RUN cat /etc/dnf/dnf.conf
+#RUN cat /etc/yum.conf
+#RUN dnf install -y python:x86_64:27.5-86.el7 --allowerasing
+#RUN dnf install -y python-2.7.5-86.el7.x86_64
+#RUN dnf install -y @python27 && alternatives --set python /usr/bin/python3
+#RUN dnf install -y http://mirror.centos.org/centos/8/BaseOS/x86_64/os/Packages/policycoreutils-python-utils-2.8-16.1.el8.noarch.rpm
+#RUN ls -l /usr/bin/python*
+#RUN dnf install -y policycoreutils-python --nobest --allowerasing
+#RUN dnf install -y container-selinux --nobest --allowerasing
+#RUN dnf install -y docker-ce --nobest --allowerasing
 
-# When bash is started non-interactively, to run a shell script, for example it
-# looks for this variable and source the content of this file. This will enable
-# the SCL for all scripts without need to do 'scl enable'.
-ADD contrib/bin/scl_enable /usr/local/bin/scl_enable
-ADD contrib/bin/configure-agent /usr/local/bin/configure-agent
-ADD ./contrib/settings.xml $HOME/.m2/
+#RUN podman info
+RUN dnf install -y podman
 
-RUN chown -R 1001:0 $HOME && \
-    chmod -R g+rw $HOME && \
-    useradd -u 1001 jenkins && \
-    usermod -aG wheel jenkins && \
-    usermod -aG docker jenkins && \
-    echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    rpm -V java-1.8.0-openjdk-devel.x86_64 maven docker-ce
-
-USER 1001
-
-ADD entrypoint.sh /entrypoint.sh
-
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
+#RUN chown -R 1001:0 $HOME && \
+#    chmod -R g+rw $HOME && \
+#    useradd -u 1001 jenkins && \
+#    usermod -aG wheel jenkins && \
+#    usermod -aG docker jenkins && \
+#    echo "%wheel ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+#    rpm -V java-11-openjdk-devel.x86_64 docker-ce
+#
+#USER 1001
+#
+#ADD entrypoint.sh /entrypoint.sh
+#
+#ENTRYPOINT ["/usr/bin/dumb-init", "--", "/entrypoint.sh"]
