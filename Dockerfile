@@ -1,4 +1,4 @@
-FROM quay.io/openshift/origin-jenkins-agent-base:4.2
+FROM quay.io/openshift/origin-jenkins-agent-base:4.6.0
 
 ENV MAVEN_VERSION=3.5 \
     BASH_ENV=/usr/local/bin/scl_enable \
